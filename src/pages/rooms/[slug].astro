@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getRooms } from '../../lib/notion'
+
+const { slug } = Astro.params
+const rooms = await getRooms()
+const room = rooms.find(r => r.slug === slug)
+
+if (!room) return Astro.redirect('/rooms/')
+---
+<BaseLayout title={`${room.title} — The Three Edit`}>
+
+  <main>
+    <div class="container">
+      <div class="page-hero">
+        <span class="label">room recipe</span>
+        <h1 id="room-title"></h1>
+        <p id="room-desc"></p>
+      </div>
+
+      <div class="room-gallery" id="room-gallery"></div>
+
+      <section id="shop-section" class="hidden" style="margin-top: var(--space-xl);">
+        <div class="section-header">
+          <span class="label">shop the room</span>
+          <h2>Everything in This Room</h2>
+        </div>
+        <div class="grid-3" id="products-grid"></div>
+      </section>
+    </div>
+  </main>
+
+  <div id="lightbox" class="lightbox">
+    <button class="lightbox__close" aria-label="Close lightbox">&times;</button>
+    <img class="lightbox__img" src="" alt="" />
+  </div>
+
+</BaseLayout>
+
+<script is:inline>
+  const slug = window.location.pathname.replace(/^\/rooms\//, '').replace(/\/$/, '');
+
+  Promise.all([
+    fetch('/api/rooms').then(r => r.json()),
+    fetch('/api/products').then(r => r.json()),
+  ]).then(([rooms, products]) => {
+    const room = rooms.find(r => r.slug === slug);
+    if (!room) {
+      document.getElementById('room-title').textContent = 'Room not found';
+      return;
+    }
+
+    injectSEO(room.title + ' — The Three Edit', room.description, room.images[0]);
+
+    document.getElementById('room-title').textContent = room.title;
+    document.getElementById('room-desc').textContent = room.description;
+
+    const gallery = document.getElementById('room-gallery');
+    room.images.forEach(src => {
+      const img = document.createElement('img');
+      img.src = src;
+      img.alt = room.altText;
+      img.loading = 'lazy';
+      gallery.appendChild(img);
+    });
+    initLightbox();
+    initPinterestSave(gallery.querySelectorAll('img'));
+
+    const linked = products.filter(p => p.roomIds.includes(room.id));
+    if (linked.length) {
+      document.getElementById('shop-section').classList.remove('hidden');
+      const grid = document.getElementById('products-grid');
+      linked.forEach(p => {
+        grid.insertAdjacentHTML('beforeend', `
+          <a class="card" href="/products/${esc(p.slug)}/">
+            <div class="card__image">${slideshowHtml(p.images, false, p.altText)}</div>
+            <div class="card__overlay">
+              <p class="card__name">${esc(p.title)}</p>
+              <p class="card__desc">${esc(p.description)}</p>
+              <span class="card__link">shop the edit →</span>
+            </div>
+          </a>
+        `);
+      });
+      initSlideshows();
+    }
+  });
+</script>

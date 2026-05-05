@@ -1,0 +1,92 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+<BaseLayout title="About — The Three Edit">
+
+  <main>
+    <div class="container">
+      <div class="about-layout">
+        <div class="about-photo">
+          <img id="about-photo" src="/images/about/melody.webp" alt="Melody, founder of The Three Edit" />
+        </div>
+        <div class="about-content">
+          <div class="page-hero" style="padding-top: 0; border-bottom: none; margin-bottom: var(--space-md);">
+            <span class="label">the story</span>
+            <h1>About Melody</h1>
+          </div>
+          <div id="about-paragraphs" class="about-intro">
+            <p>"I'm drawn to the search for beautiful things. Not collecting for the sake of it — but the quiet pleasure of finding something that feels exactly right, and understanding why.</p>
+            <p>That instinct led here: to The Three Edit, where finding becomes curating, and curating becomes a way of helping you feel something in a space. Not just see it.</p>
+            <p>I believe a home isn't decorated — it's assembled, slowly, from things that earn their place."</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="ikigai">
+        <div class="ikigai__item">
+          <span class="ikigai__key">Love</span>
+          <p id="ikigai-love" class="ikigai__value">the search for beautiful things</p>
+        </div>
+        <div class="ikigai__item">
+          <span class="ikigai__key">Skill</span>
+          <p id="ikigai-skill" class="ikigai__value">finding them, curating them, putting them together</p>
+        </div>
+        <div class="ikigai__item">
+          <span class="ikigai__key">Value</span>
+          <p id="ikigai-value" class="ikigai__value">inspiring people with those discoveries</p>
+        </div>
+        <div class="ikigai__item">
+          <span class="ikigai__key">Bridge</span>
+          <p id="ikigai-bridge" class="ikigai__value">connecting people to the things, scenes, and feelings found</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+</BaseLayout>
+
+<script is:inline>
+  Promise.all([
+    fetch('/api/content'),
+    fetch('/api/text').catch(() => null),
+  ]).then(async ([contentRes, textRes]) => {
+    const content = await contentRes.json();
+    const text    = textRes ? await textRes.json().catch(() => ({})) : {};
+    const ab      = content.about;
+    const t       = key => text[key]?.text || '';
+
+    injectSEO('About — The Three Edit', text['ab_01_story_02_headline']?.seoDescription || '');
+
+    const label = t('ab_01_story_01_label');
+    if (label) document.querySelector('.about-content .label').textContent = label;
+    const headline = t('ab_01_story_02_headline');
+    if (headline) document.querySelector('.about-content h1').textContent = headline;
+
+    const photoUrl = text['ab_01_story_01_image']?.mediaUrl || ab.image || '';
+    if (photoUrl) {
+      const img = document.getElementById('about-photo');
+      img.src = photoUrl;
+      img.removeAttribute('srcset');
+    }
+
+    const p1 = t('ab_01_story_03_body_1');
+    const p2 = t('ab_01_story_04_body_2');
+    const p3 = t('ab_01_story_05_body_3');
+    const notionParas = [p1, p2, p3].filter(Boolean);
+    const paragraphs = notionParas.length ? notionParas : ab.paragraphs;
+    if (paragraphs.length) {
+      document.getElementById('about-paragraphs').innerHTML =
+        paragraphs.map(p => `<p>${esc(p)}</p>`).join('');
+    }
+
+    const ikigaiMap = {
+      love:   t('ab_02_ikigai_03_love')   || ab.ikigai?.love,
+      skill:  t('ab_02_ikigai_04_skill')  || ab.ikigai?.skill,
+      value:  t('ab_02_ikigai_05_value')  || ab.ikigai?.value,
+      bridge: t('ab_02_ikigai_06_bridge') || ab.ikigai?.bridge,
+    };
+    ['love', 'skill', 'value', 'bridge'].forEach(key => {
+      if (ikigaiMap[key]) document.getElementById('ikigai-' + key).textContent = ikigaiMap[key];
+    });
+  });
+</script>

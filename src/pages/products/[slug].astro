@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+import { getProducts } from '../../lib/notion'
+
+const { slug } = Astro.params
+const products = await getProducts()
+const product = products.find(p => p.slug === slug)
+
+if (!product) return Astro.redirect('/products/')
+---
+<BaseLayout title={`${product.title} — The Three Edit`}>
+
+  <main>
+    <div class="container">
+      <div class="product-hero">
+        <div id="product-images" class="product-gallery"></div>
+        <div class="product-hero__info">
+          <span class="label">the edit</span>
+          <h1 id="product-title"></h1>
+          <p id="product-desc"></p>
+          <div id="product-tags" class="product-tags"></div>
+          <div class="card__actions">
+            <a id="product-buy" href="#" target="_blank" rel="noopener noreferrer" class="btn btn--filled">Shop the edit</a>
+          </div>
+        </div>
+      </div>
+
+      <section id="rooms-section" class="hidden" style="margin-top: var(--space-xl);">
+        <div class="section-header">
+          <span class="label">find it in</span>
+          <h2>See It in a Room</h2>
+        </div>
+        <div class="grid-2" id="rooms-grid"></div>
+      </section>
+    </div>
+  </main>
+
+</BaseLayout>
+
+<script is:inline>
+  const slug = window.location.pathname.replace(/^\/products\//, '').replace(/\/$/, '');
+
+  Promise.all([
+    fetch('/api/products').then(r => r.json()),
+    fetch('/api/rooms').then(r => r.json()),
+  ]).then(([products, rooms]) => {
+    const product = products.find(p => p.slug === slug);
+    if (!product) {
+      document.getElementById('product-title').textContent = 'Product not found';
+      return;
+    }
+
+    injectSEO(product.title + ' — The Three Edit', product.description, product.images[0]);
+
+    document.getElementById('product-title').textContent = product.title;
+    document.getElementById('product-desc').textContent = product.description;
+
+    const imagesEl = document.getElementById('product-images');
+    imagesEl.innerHTML = slideshowHtml(product.images, false, product.altText);
+    initSlideshows();
+    initPinterestSave(imagesEl.querySelectorAll('img'));
+
+    const tagsEl = document.getElementById('product-tags');
+    [...product.style, ...product.color].forEach(tag => {
+      tagsEl.insertAdjacentHTML('beforeend', `<span class="tag">${esc(tag)}</span>`);
+    });
+
+    const buyBtn = document.getElementById('product-buy');
+    const link = safeUrl(product.link);
+    if (link === '#') {
+      buyBtn.classList.add('hidden');
+    } else {
+      buyBtn.href = link;
+    }
+
+    const linked = rooms.filter(r => product.roomIds.includes(r.id));
+    if (linked.length) {
+      document.getElementById('rooms-section').classList.remove('hidden');
+      const grid = document.getElementById('rooms-grid');
+      linked.forEach(room => {
+        grid.insertAdjacentHTML('beforeend', `
+          <a class="card" href="/rooms/${esc(room.slug)}/">
+            <div class="card__image">${slideshowHtml(room.images, false, room.altText)}</div>
+            <div class="card__overlay">
+              <p class="card__name">${esc(room.title)}</p>
+              <p class="card__desc">${esc(room.description)}</p>
+              <span class="card__link">explore →</span>
+            </div>
+          </a>
+        `);
+      });
+      initSlideshows();
+    }
+  });
+</script>

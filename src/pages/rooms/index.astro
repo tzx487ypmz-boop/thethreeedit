@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro'
+---
+<BaseLayout title="Rooms — The Three Edit">
+
+  <main>
+    <div class="container">
+      <div class="page-hero">
+        <span class="label">room recipes</span>
+        <h1>The Rooms</h1>
+        <p>Each room is a feeling first. Browse the spaces, then shop the things that make them.</p>
+      </div>
+      <div class="grid-2" id="rooms-grid"></div>
+    </div>
+  </main>
+
+</BaseLayout>
+
+<script is:inline>
+  Promise.all([
+    fetch('/api/rooms'),
+    fetch('/api/text').catch(() => null),
+  ]).then(async ([roomsRes, textRes]) => {
+    const rooms = await roomsRes.json();
+    const text  = textRes ? await textRes.json().catch(() => ({})) : {};
+    const t     = key => text[key]?.text || '';
+
+    injectSEO(
+      (t('ro_01_rooms_02_headline') || 'Rooms') + ' — The Three Edit',
+      text['ro_01_rooms_02_headline']?.seoDescription || ''
+    );
+
+    const label = t('ro_01_rooms_01_label');
+    if (label) document.querySelector('.page-hero .label').textContent = label;
+    const headline = t('ro_01_rooms_02_headline');
+    if (headline) document.querySelector('.page-hero h1').textContent = headline;
+    const subhead = t('ro_01_rooms_03_subheadline');
+    if (subhead) document.querySelector('.page-hero p').textContent = subhead;
+
+    const grid = document.getElementById('rooms-grid');
+    rooms.forEach(room => {
+      grid.insertAdjacentHTML('beforeend', `
+        <a class="card" href="/rooms/${esc(room.slug)}/">
+          <div class="card__image">${slideshowHtml(room.images, false, room.altText)}</div>
+          <div class="card__overlay">
+            <p class="card__name">${esc(room.title)}</p>
+            <p class="card__desc">${esc(room.description)}</p>
+            <span class="card__link">explore →</span>
+          </div>
+        </a>
+      `);
+    });
+
+    initSlideshows();
+  });
+</script>

@@ -1,0 +1,34 @@
+[
+  {
+    "id": "reading-corner",
+    "title": "The Reading Corner",
+    "coverImage": "https://placehold.co/800x600/D9D5CC/2F3433?text=The+Reading+Corner",
+    "roomStory": "A corner built for slowing down. Warm textures, soft light, and a deliberate arrangement of things that invite you to stay a little longer. Everything here was chosen to feel good before it was chosen to look good.",
+    "gallery": [
+      "https://placehold.co/800x600/D9D5CC/2F3433?text=Reading+Corner+01",
+      "https://placehold.co/800x600/D9D5CC/2F3433?text=Reading+Corner+02",
+      "https://placehold.co/800x600/D9D5CC/2F3433?text=Reading+Corner+03"
+    ],
+    "productIds": ["linen-throw", "ceramic-mug", "woven-basket"]
+  },
+  {
+    "id": "the-still-kitchen",
+    "title": "The Still Kitchen",
+    "coverImage": "https://placehold.co/800x600/D9D5CC/2F3433?text=The+Still+Kitchen",
+    "roomStory": "A kitchen that earns its quiet. Linen, ceramic, and aged wood — objects that age beautifully and improve with use. Nothing performative, everything purposeful.",
+    "gallery": [
+      "https://placehold.co/800x600/D9D5CC/2F3433?text=Still+Kitchen+01"
+    ],
+    "productIds": ["ceramic-mug", "linen-napkins", "wooden-tray"]
+  },
+  {
+    "id": "morning-bedroom",
+    "title": "The Morning Bedroom",
+    "coverImage": "https://placehold.co/800x600/D9D5CC/2F3433?text=The+Morning+Bedroom",
+    "roomStory": "Designed around the first hour of the day. Soft light, breathable layers, and a single stem in a bud vase. A room that feels like a deep exhale.",
+    "gallery": [
+      "https://placehold.co/800x600/D9D5CC/2F3433?text=Morning+Bedroom+01"
+    ],
+    "productIds": ["linen-throw", "bud-vase", "linen-napkins"]
+  }
+]

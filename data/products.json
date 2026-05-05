@@ -1,0 +1,62 @@
+[
+  {
+    "id": "linen-throw",
+    "title": "Stonewashed Linen Throw",
+    "description": "Stonewashed linen in warm oat. Gets softer with every wash. The kind of thing you reach for without thinking.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Linen+Throw",
+    "style": ["minimal", "warm"],
+    "color": ["neutral"],
+    "affiliateLink": "#",
+    "roomIds": ["reading-corner", "morning-bedroom"]
+  },
+  {
+    "id": "ceramic-mug",
+    "title": "Handthrown Ceramic Mug",
+    "description": "A mug made to be held. Slightly irregular, uneven glaze in warm clay. Each one is different; that's the point.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Ceramic+Mug",
+    "style": ["warm", "textured"],
+    "color": ["terracotta"],
+    "affiliateLink": "#",
+    "roomIds": ["reading-corner", "the-still-kitchen"]
+  },
+  {
+    "id": "woven-basket",
+    "title": "Seagrass Storage Basket",
+    "description": "Woven seagrass with a wide opening. Stores blankets, holds magazines, earns its place in a corner just by existing.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Woven+Basket",
+    "style": ["textured", "warm"],
+    "color": ["neutral"],
+    "affiliateLink": "#",
+    "roomIds": ["reading-corner"]
+  },
+  {
+    "id": "linen-napkins",
+    "title": "Undyed Linen Napkins (Set of 4)",
+    "description": "Raw-edge linen in natural undyed flax. They wrinkle beautifully. Set them out folded loosely — that's the whole look.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Linen+Napkins",
+    "style": ["minimal"],
+    "color": ["neutral"],
+    "affiliateLink": "#",
+    "roomIds": ["the-still-kitchen", "morning-bedroom"]
+  },
+  {
+    "id": "wooden-tray",
+    "title": "Mango Wood Serving Tray",
+    "description": "A wide, low tray in oiled mango wood. For morning coffee arrangements, for gathering the things that accumulate on a counter.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Wooden+Tray",
+    "style": ["warm", "minimal"],
+    "color": ["neutral"],
+    "affiliateLink": "#",
+    "roomIds": ["the-still-kitchen"]
+  },
+  {
+    "id": "bud-vase",
+    "title": "Frosted Glass Bud Vase",
+    "description": "A narrow-necked glass vase in soft sage. Made for a single stem, a sprig of eucalyptus, or nothing at all.",
+    "image": "https://placehold.co/600x600/F5F4F0/4F5F5B?text=Bud+Vase",
+    "style": ["minimal"],
+    "color": ["green"],
+    "affiliateLink": "#",
+    "roomIds": ["morning-bedroom"]
+  }
+]

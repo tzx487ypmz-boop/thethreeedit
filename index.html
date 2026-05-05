@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Three Edit — slow living, carefully found.</title>
+  <meta name="description" content="Curated finds, room recipes, and the quiet details that make a space feel beautiful, useful, and lived-in." />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="The Three Edit" />
+  <meta property="og:description" content="Curated finds, room recipes, and the quiet details that make a space feel beautiful, useful, and lived-in." />
+  <meta property="og:image" content="" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">the three edit</a>
+      <ul class="nav__links">
+        <li><a href="/rooms/">Rooms</a></li>
+        <li><a href="/products/">Products</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero__image">
+      <img id="hero-img" src="/images/hero/hero.webp" alt="The Three Edit — slow living, carefully found." />
+    </div>
+    <div class="hero__text">
+      <span class="label">slow living, carefully found.</span>
+      <h1 id="hero-headline">Find the feeling<br>of a room.</h1>
+      <p id="hero-subhead">Curated finds, room recipes, and everyday details that make a space feel more beautiful, useful, and lived-in.</p>
+      <a href="/rooms/" class="btn btn--filled">explore the rooms</a>
+    </div>
+  </section>
+
+  <!-- How We Curate -->
+  <section class="section section--centered" id="how-we-curate">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">the approach</span>
+        <h2 id="curate-title">The edit, in three steps</h2>
+      </div>
+      <ol class="steps" id="steps-list"></ol>
+    </div>
+  </section>
+
+  <!-- Featured Rooms -->
+  <section class="section section--alt" id="rooms">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">room recipes</span>
+        <h2 id="rooms-title">Shop the feeling of a space</h2>
+        <p id="rooms-desc">Not just the objects — the mood, the texture, the whole arrangement.</p>
+      </div>
+      <div class="grid-2" id="featured-rooms"></div>
+      <div style="margin-top: var(--space-lg); text-align: center;">
+        <a href="/rooms/" class="btn btn--accent">view all rooms</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Products -->
+  <section class="section" id="products">
+    <div class="container">
+      <div class="section-header">
+        <span class="label">the edit</span>
+        <h2 id="products-title">Carefully found things</h2>
+        <p id="products-desc">Each one chosen for how it feels, not just how it looks.</p>
+      </div>
+      <div class="grid-3" id="featured-products"></div>
+      <div style="margin-top: var(--space-lg); text-align: center;">
+        <a href="/products/" class="btn btn--accent">view all products</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Instagram -->
+  <section class="section section--alt section--centered" id="instagram">
+    <div class="container">
+      <div class="section-header">
+        <span id="instagram-handle" class="label">@thethree.edit</span>
+        <h2 id="instagram-title">Follow along</h2>
+      </div>
+      <div class="grid-3 instagram-grid" id="instagram-grid"></div>
+      <div class="instagram-cta">
+        <p id="instagram-desc">More finds, daily details, and room moments</p>
+        <a href="https://www.instagram.com/thethree.edit/" target="_blank" rel="noopener" class="btn">follow @thethree.edit</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- About snippet -->
+  <section class="section section--centered" id="about">
+    <div class="container">
+      <div style="max-width: 640px; margin-inline: auto;">
+        <span class="label">the story</span>
+        <h2>About Melody</h2>
+        <div class="about-intro" style="margin-top: var(--space-md);">
+          <p>"I'm drawn to the search for beautiful things. Not collecting for the sake of it — but the quiet pleasure of finding something that feels exactly right, and understanding why."</p>
+        </div>
+        <a href="/about/" class="btn">read more</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <span class="footer__logo">the three edit</span>
+      <nav class="footer__links">
+        <a href="/rooms/">Rooms</a>
+        <a href="/products/">Products</a>
+        <a href="/about/">About</a>
+        <a href="https://www.instagram.com/thethree.edit/" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <p id="footer-tagline" class="footer__tagline">slow living, carefully found.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    function setText(id, val) {
+      if (val) document.getElementById(id).textContent = val;
+    }
+
+    async function loadHome() {
+      const [roomsRes, productsRes, contentRes, textRes] = await Promise.all([
+        fetch('/api/rooms'),
+        fetch('/api/products'),
+        fetch('/api/content'),
+        fetch('/api/text').catch(() => null),
+      ]);
+
+      const rooms    = await roomsRes.json();
+      const products = await productsRes.json();
+      const content  = await contentRes.json();
+      const text     = textRes ? await textRes.json().catch(() => ({})) : {};
+      const hp       = content.homepage;
+      const t        = key => text[key]?.text || '';
+
+      // SEO
+      injectSEO(
+        (t('hp_01_hero_02_headline') || hp.heroHeadline || 'The Three Edit') + ' — The Three Edit',
+        text['hp_01_hero_02_headline']?.seoDescription || '',
+        text['hp_01_hero_00_image']?.mediaUrl || ''
+      );
+
+      // Hero image
+      const mediaUrl = text['hp_01_hero_00_image']?.mediaUrl || hp.heroImage || '';
+      if (mediaUrl) {
+        const heroImg = document.getElementById('hero-img');
+        if (/\.mp4(\?|$)/i.test(mediaUrl)) {
+          const video = document.createElement('video');
+          video.src = mediaUrl;
+          video.autoplay = true; video.loop = true; video.muted = true; video.playsInline = true;
+          video.style.cssText = 'width:100%;height:100%;object-fit:cover;';
+          heroImg.replaceWith(video);
+        } else {
+          heroImg.src = mediaUrl;
+        }
+      }
+
+      // Hero text
+      const heroLabel = t('hp_01_hero_01_label');
+      if (heroLabel) document.querySelector('.hero .label').textContent = heroLabel;
+      setText('hero-headline', t('hp_01_hero_02_headline') || hp.heroHeadline);
+      setText('hero-subhead',  t('hp_01_hero_03_subheadline') || hp.heroSubhead);
+      const heroCta = t('hp_01_hero_04_cta');
+      if (heroCta) document.querySelector('.hero .btn--filled').textContent = heroCta;
+
+      // Approach section
+      const approachLabel = t('hp_02_approach_01_label');
+      if (approachLabel) document.querySelector('#how-we-curate .label').textContent = approachLabel;
+      setText('curate-title', t('hp_02_approach_02_headline') || hp.howWeWorkTitle);
+
+      // Steps — prefer Notion, fall back to /api/content
+      const stepsList = document.getElementById('steps-list');
+      const notionSteps = [
+        t('hp_02_approach_03_step_1'),
+        t('hp_02_approach_04_step_2'),
+        t('hp_02_approach_05_step_3'),
+      ].filter(Boolean);
+      const stepsSource = notionSteps.length === 3 ? notionSteps : hp.howWeWorkSteps;
+      stepsSource.forEach(step => {
+        const li = document.createElement('li');
+        li.className = 'steps__item';
+        const p = document.createElement('p');
+        p.textContent = step;
+        li.appendChild(p);
+        stepsList.appendChild(li);
+      });
+
+      // Rooms section
+      const roomsLabel = t('hp_03_rooms_01_label');
+      if (roomsLabel) document.querySelector('#rooms .label').textContent = roomsLabel;
+      setText('rooms-title', t('hp_03_rooms_02_headline')    || hp.roomsTitle);
+      setText('rooms-desc',  t('hp_03_rooms_03_subheadline') || hp.roomsDescription);
+
+      // Products section
+      const productsLabel = t('hp_04_products_01_label');
+      if (productsLabel) document.querySelector('#products .label').textContent = productsLabel;
+      setText('products-title', t('hp_04_products_02_headline')    || hp.productsTitle);
+      setText('products-desc',  t('hp_04_products_03_subheadline') || hp.productsDescription);
+
+      // Social section
+      setText('instagram-handle', t('hp_05_social_01_label')       || hp.instagramHandle);
+      setText('instagram-title',  t('hp_05_social_02_headline')    || hp.instagramTitle);
+      setText('instagram-desc',   t('hp_05_social_03_subheadline') || hp.instagramDescription);
+      const socialCta = t('hp_05_social_04_cta');
+      if (socialCta) document.querySelector('.instagram-cta .btn').textContent = socialCta;
+
+      // About snippet
+      const aboutLabel = t('hp_06_about_01_label');
+      if (aboutLabel) document.querySelector('#about .label').textContent = aboutLabel;
+      const aboutHeadline = t('hp_06_about_02_headline');
+      if (aboutHeadline) document.querySelector('#about h2').textContent = aboutHeadline;
+      const aboutBody = t('hp_06_about_03_body');
+      if (aboutBody) document.querySelector('#about .about-intro p').textContent = aboutBody;
+      const aboutCta = t('hp_06_about_04_cta');
+      if (aboutCta) document.querySelector('#about .btn').textContent = aboutCta;
+
+      // Footer
+      setText('footer-tagline', t('gl_02_footer_01_tagline') || hp.footerTagline);
+
+      // Featured rooms (first 3)
+      const roomsEl = document.getElementById('featured-rooms');
+      rooms.slice(0, 3).forEach(room => {
+        roomsEl.insertAdjacentHTML('beforeend', `
+          <a class="card" href="/rooms/${esc(room.slug)}/">
+            <div class="card__image">${slideshowHtml(room.images, false, room.altText)}</div>
+            <div class="card__overlay">
+              <p class="card__name">${esc(room.title)}</p>
+              <p class="card__desc">${esc(room.description)}</p>
+              <span class="card__link">explore →</span>
+            </div>
+          </a>
+        `);
+      });
+
+      // Featured products (first 6)
+      const productsEl = document.getElementById('featured-products');
+      products.slice(0, 6).forEach(p => {
+        productsEl.insertAdjacentHTML('beforeend', `
+          <a class="card" href="/products/${esc(p.slug)}/">
+            <div class="card__image">${slideshowHtml(p.images, false, p.altText)}</div>
+            <div class="card__overlay">
+              <p class="card__name">${esc(p.title)}</p>
+              <p class="card__desc">${esc(p.description)}</p>
+              <span class="card__link">shop the edit →</span>
+            </div>
+          </a>
+        `);
+      });
+
+      initSlideshows();
+    }
+
+    loadHome();
+  </script>
+</body>
+</html>

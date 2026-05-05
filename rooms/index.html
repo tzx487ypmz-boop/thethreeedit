@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rooms — The Three Edit</title>
+  <meta name="description" content="" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rooms — The Three Edit" />
+  <meta property="og:description" content="" />
+  <meta property="og:image" content="" />
+  <link rel="stylesheet" href="/css/styles.css" />
+</head>
+<body>
+
+  <nav class="nav" role="navigation" aria-label="Main navigation">
+    <div class="nav__inner">
+      <a href="/" class="nav__logo">the three edit</a>
+      <ul class="nav__links">
+        <li><a href="/rooms/">Rooms</a></li>
+        <li><a href="/products/">Products</a></li>
+        <li><a href="/about/">About</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <main>
+    <div class="container">
+      <div class="page-hero">
+        <span class="label">room recipes</span>
+        <h1>The Rooms</h1>
+        <p>Each room is a feeling first. Browse the spaces, then shop the things that make them.</p>
+      </div>
+      <div class="grid-2" id="rooms-grid"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__inner">
+      <span class="footer__logo">the three edit</span>
+      <nav class="footer__links">
+        <a href="/rooms/">Rooms</a>
+        <a href="/products/">Products</a>
+        <a href="/about/">About</a>
+        <a href="https://www.instagram.com/thethree.edit/" target="_blank" rel="noopener">Instagram</a>
+      </nav>
+      <p class="footer__tagline">slow living, carefully found.</p>
+    </div>
+  </footer>
+
+  <script src="/js/main.js"></script>
+  <script>
+    Promise.all([
+      fetch('/api/rooms'),
+      fetch('/api/text').catch(() => null),
+    ]).then(async ([roomsRes, textRes]) => {
+      const rooms = await roomsRes.json();
+      const text  = textRes ? await textRes.json().catch(() => ({})) : {};
+      const t     = key => text[key]?.text || '';
+
+      injectSEO(
+        (t('ro_01_rooms_02_headline') || 'Rooms') + ' — The Three Edit',
+        text['ro_01_rooms_02_headline']?.seoDescription || ''
+      );
+
+      // Page hero text
+      const label = t('ro_01_rooms_01_label');
+      if (label) document.querySelector('.page-hero .label').textContent = label;
+      const headline = t('ro_01_rooms_02_headline');
+      if (headline) document.querySelector('.page-hero h1').textContent = headline;
+      const subhead = t('ro_01_rooms_03_subheadline');
+      if (subhead) document.querySelector('.page-hero p').textContent = subhead;
+
+      const grid = document.getElementById('rooms-grid');
+      rooms.forEach(room => {
+        grid.insertAdjacentHTML('beforeend', `
+          <a class="card" href="/rooms/${esc(room.slug)}/">
+            <div class="card__image">${slideshowHtml(room.images, false, room.altText)}</div>
+            <div class="card__overlay">
+              <p class="card__name">${esc(room.title)}</p>
+              <p class="card__desc">${esc(room.description)}</p>
+              <span class="card__link">explore →</span>
+            </div>
+          </a>
+        `);
+      });
+
+      initSlideshows();
+    });
+  </script>
+</body>
+</html>

@@ -773,7 +773,6 @@ p {
 /* ─── How We Curate Steps ──────────────────────────────────────────────── */
 .steps {
   list-style: none;
-  counter-reset: step;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: var(--space-md) var(--space-lg);
@@ -781,20 +780,27 @@ p {
 }
 
 .steps__item {
-  counter-increment: step;
   padding-top: var(--space-md);
   border-top: 1px solid var(--color-bg-alt);
 }
 
-.steps__item::before {
-  content: counter(step, decimal-leading-zero);
-  font-family: var(--font-heading);
-  font-size: 2.8rem;
-  color: var(--color-accent);
-  font-style: italic;
+.steps__number {
   display: block;
-  margin-bottom: 0.75rem;
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  color: var(--color-accent);
   line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.steps__label {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  letter-spacing: 0.04em;
+  color: var(--color-text);
+  margin-bottom: 0.75rem;
 }
 
 .steps__item p {

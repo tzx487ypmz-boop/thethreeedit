@@ -25,20 +25,6 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     </div>
   </section>
 
-  <section class="section section--alt" id="rooms">
-    <div class="container">
-      <div class="section-header">
-        <span class="label">room recipes</span>
-        <h2 id="rooms-title">Shop the feeling of a space</h2>
-        <p id="rooms-desc">Not just the objects — the mood, the texture, the whole arrangement.</p>
-      </div>
-      <div class="grid-2" id="featured-rooms"></div>
-      <div style="margin-top: var(--space-lg); text-align: center;">
-        <a href="/rooms/" class="btn btn--accent">view all rooms</a>
-      </div>
-    </div>
-  </section>
-
   <section class="section" id="products">
     <div class="container">
       <div class="section-header">
@@ -53,16 +39,16 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     </div>
   </section>
 
-  <section class="section section--alt section--centered" id="instagram">
+  <section class="section section--alt" id="rooms">
     <div class="container">
       <div class="section-header">
-        <span id="instagram-handle" class="label">@thethree.edit</span>
-        <h2 id="instagram-title">Follow along</h2>
+        <span class="label">room recipes</span>
+        <h2 id="rooms-title">Shop the feeling of a space</h2>
+        <p id="rooms-desc">Not just the objects — the mood, the texture, the whole arrangement.</p>
       </div>
-      <div class="grid-3 instagram-grid" id="instagram-grid"></div>
-      <div class="instagram-cta">
-        <p id="instagram-desc">More finds, daily details, and room moments</p>
-        <a href="https://www.instagram.com/thethree.edit/" target="_blank" rel="noopener" class="btn">follow @thethree.edit</a>
+      <div class="grid-2" id="featured-rooms"></div>
+      <div style="margin-top: var(--space-lg); text-align: center;">
+        <a href="/rooms/" class="btn btn--accent">view all rooms</a>
       </div>
     </div>
   </section>
@@ -76,6 +62,20 @@ import BaseLayout from '../layouts/BaseLayout.astro'
           <p>"I'm drawn to the search for beautiful things. Not collecting for the sake of it — but the quiet pleasure of finding something that feels exactly right, and understanding why."</p>
         </div>
         <a href="/about/" class="btn">read more</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt section--centered" id="instagram">
+    <div class="container">
+      <div class="section-header">
+        <span id="instagram-handle" class="label">@thethree.edit</span>
+        <h2 id="instagram-title">Follow along</h2>
+      </div>
+      <div class="grid-3 instagram-grid" id="instagram-grid"></div>
+      <div class="instagram-cta">
+        <p id="instagram-desc">More finds, daily details, and room moments</p>
+        <a href="https://www.instagram.com/thethree.edit/" target="_blank" rel="noopener" class="btn">follow @thethree.edit</a>
       </div>
     </div>
   </section>
@@ -134,18 +134,52 @@ import BaseLayout from '../layouts/BaseLayout.astro'
     setText('curate-title', t('hp_02_approach_02_headline') || hp.howWeWorkTitle);
 
     const stepsList = document.getElementById('steps-list');
-    const notionSteps = [
-      t('hp_02_approach_03_step_1'),
-      t('hp_02_approach_04_step_2'),
-      t('hp_02_approach_05_step_3'),
-    ].filter(Boolean);
-    const stepsSource = notionSteps.length === 3 ? notionSteps : hp.howWeWorkSteps;
-    stepsSource.forEach(step => {
+
+    const stepData = [
+      {
+        number: t('hp_02_approach_03_nr_1'),
+        label:  t('hp_02_approach_04_stepname_1'),
+        body:   t('hp_02_approach_05_step_1'),
+      },
+      {
+        number: t('hp_02_approach_03_nr_2'),
+        label:  t('hp_02_approach_04_stepname_2'),
+        body:   t('hp_02_approach_05_step_2'),
+      },
+      {
+        number: t('hp_02_approach_03_nr_3'),
+        label:  t('hp_02_approach_04_stepname_3'),
+        body:   t('hp_02_approach_05_step_3'),
+      },
+    ];
+
+    const fallback = hp.howWeWorkSteps || [];
+    const fallbackNums = ['01', '02', '03'];
+
+    stepData.forEach((step, idx) => {
       const li = document.createElement('li');
       li.className = 'steps__item';
+
+      const number = step.number || fallbackNums[idx];
+      const label  = step.label  || '';
+      const body   = step.body   || fallback[idx] || '';
+
+      const numEl = document.createElement('span');
+      numEl.className = 'steps__number';
+      numEl.textContent = number;
+      li.appendChild(numEl);
+
+      if (label) {
+        const labelEl = document.createElement('span');
+        labelEl.className = 'steps__label';
+        labelEl.textContent = label;
+        li.appendChild(labelEl);
+      }
+
       const p = document.createElement('p');
-      p.textContent = step;
+      p.textContent = body;
       li.appendChild(p);
+
       stepsList.appendChild(li);
     });
 

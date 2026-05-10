@@ -280,13 +280,19 @@ export async function getProducts(): Promise<Product[]> {
 export async function getContent(): Promise<ContentBlock> {
   const hit = getCached<ContentBlock>('content')
   if (hit) return hit
+
+  const homepageId = import.meta.env.NOTION_HOMEPAGE_ID
+  const aboutId    = import.meta.env.NOTION_ABOUT_ID
+  const empty      = { results: [] as any[] }
+
   const [hpBlocks, abBlocks] = await Promise.all([
-    notion.blocks.children.list({ block_id: import.meta.env.NOTION_HOMEPAGE_ID, page_size: 100 }),
-    notion.blocks.children.list({ block_id: import.meta.env.NOTION_ABOUT_ID, page_size: 100 }),
+    homepageId ? notion.blocks.children.list({ block_id: homepageId, page_size: 100 }) : empty,
+    aboutId    ? notion.blocks.children.list({ block_id: aboutId,    page_size: 100 }) : empty,
   ])
+
   const content: ContentBlock = {
     homepage: parseHomepage(hpBlocks.results),
-    about: parseAbout(abBlocks.results),
+    about:    parseAbout(abBlocks.results),
   }
   setCached('content', content)
   return content
